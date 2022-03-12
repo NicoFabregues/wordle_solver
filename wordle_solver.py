@@ -29,7 +29,8 @@ def get_words_values(words, letters_ocurrences):
 
 def main():
     # Initial Required Inputs
-    path = "./diccionario.txt"
+    # path = "./diccionario.txt"
+    path = "./english_dict.txt"
     word_length = 5
 
     # Busco las palabras del archivo que tengan 5 letras.
