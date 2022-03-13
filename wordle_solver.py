@@ -2,12 +2,14 @@
 
 
 def get_words_length_from_file(path, n):
+    """ Open file and return its words of specified length. """
     with open(path, encoding="utf-8") as file:
         content = file.read().splitlines()
         return set(filter(lambda x: len(x) == n, content))
 
 
 def get_words_values(words, letters_ocurrences):
+    """ Returns a dict of words sorted by probability of occurrence. """
     final = dict()
     for word in words:
         final[word] = 0
@@ -16,28 +18,46 @@ def get_words_values(words, letters_ocurrences):
     return sorted(final, key=final.get, reverse=True)
 
 
+def setup():
+    """ Function to customize settings. """
+
+    language = input("""\n\nSelect your language:\n\t1- English\n\t2- Spanish\n\n""")
+    while language not in ['1', '2']:
+        language = input("""\n\nSelect your language:\n\t1- English\n\t2- Spanish\n\n""")
+
+    if language == '1':
+        path = "./english_dict.txt"
+    elif language == '2':
+        path = "./spanish_dict.txt"
+    # TODO: implement new languages.
+
+    word_length = int(input("""\n\nSelect word length: """))
+    while word_length < 3 or word_length > 7:
+        print("\n\n--- --- Words length must be a number between 3 and 7 --- ---")
+        word_length = int(input("""\n\nSelect word length: """))
+
+    return path, word_length
+
+
 def main():
+
     # Initial Required Inputs
-    path = "./diccionario.txt"
-    # path = "./english_dict.txt"
-    word_length = 5
+    path, word_length = setup()
 
-    # Busco las palabras del archivo que tengan 5 letras.
-    original_words = words = get_words_length_from_file(path, word_length)
+    words = get_words_length_from_file(path, word_length)
 
-    print("\n\n--- --- Words Original Amount: %s --- ---", len(words))
+    print(f"\n\n--- --- Words Original Amount: {len(words)} --- ---")
 
     from collections import Counter
-    # Cuento la cantidad de ocurrencias de cada letra.
     letters_ocurrences = Counter("".join(words))
 
     while(True):
-        # Punteo las palabras en base a las ocurrencias de las letras,
-        # Para obtener la palabra con las mejores ocurrencias.
+
         valued_words = get_words_values(words, letters_ocurrences)
         if not valued_words:
             print("\n\n--- --- ERROR: No words left. --- ---")
             return
+
         iter_valued_words = iter(valued_words)
         best = next(iter_valued_words, False)
         print('\n\nBest Word = ', best)
@@ -74,13 +94,13 @@ def main():
         i = 0
         for number,letter in zip(answer, best):
             if number == '0':
-                # Elimino las palabras que tenga una unica ocurrencia de esa letra.
+                # Remove words that contain this letter only one time.
                 words = set(filter(lambda x: x.count(letter) != 1, words))
             elif number == '1':
-                # Filtro las palabras que solo tengan esa letra.
+                # Keep words that contain this letter in other spot.
                 words = set(filter(lambda x: x.find(letter) != -1 and x.find(letter) != i, words))
             elif number == '2':
-                # Filtro las palabras que solo tengan esa letra en posicion.
+                # Keep words that contain this letter in this spot.
                 words = set(filter(lambda x: x.find(letter) == i, words))
             i += 1
         print('Words Left = ', len(words))
