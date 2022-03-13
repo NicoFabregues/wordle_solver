@@ -66,7 +66,7 @@ def main():
         while(True):
             answer = input('Enter the value of each letter in their respective order (0-Bad, 1-Wrong spot, 2-Good): ')
 
-            if len(answer) == 5 and answer.isdigit():
+            if len(answer) == word_length and answer.isdigit():
                 break
             elif answer == 'win':
                 print("\n\n--- --- Congratulations! You win. --- ---")
@@ -80,13 +80,13 @@ def main():
                 return
             elif answer == 'next' or answer == 'not valid':
                 if answer == 'not valid' and best in words:
-                    # Si no es válida la elimino.
                     words.remove(best)
                 print("\n\nSearching for next word ...")
                 best = next(iter_valued_words, False)
                 if not best:
-                    print("\n\n--- --- ERROR: No words left. --- ---")
-                    return
+                    # If iter gets to the end, restart iter.
+                    iter_valued_words = iter(valued_words)
+                    best = next(iter_valued_words, False)
                 print('\n\nBest Word = ', best)
             elif answer == 'input':
                 best = input('\n\nEnter your custom word: ')
